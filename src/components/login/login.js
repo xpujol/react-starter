@@ -1,70 +1,76 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
-import { login } from '../../actions/auth';
-import { debug } from '../../helpers/log';
-import { Colors, Button } from 'react-foundation';
+import UzInput from '../uz/uz-input';
+import {
+  Row,
+  Column,
+  Colors,
+  Button
+} from 'react-foundation';
 
 export class Login extends Component {
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.isAuthenticated) {
-      this.props.onSuccess();
-    }
 
-    if (nextProps.errorMessage) {
-      this.props.onError(nextProps.errorMessage);
+  constructor() {
+    super();
+    this.state = {
+      username: '',
+      password: ''
+    };
+  }
+
+  onInputChange(inputName, e) {
+    const obj = {};
+    obj[inputName] = e.target.value;
+
+    this.setState(obj);
+  }
+
+  doValidate(e) {
+    e.preventDefault();
+
+    const { username, password } = this.state;
+
+    if (!username.length || !password.length) {
+      console.log('Please type a username and passowrd!');
     }
   }
 
   render() {
-    const { onSubmit } = this.props;
 
-    const handleSubmit = event => {
-      event.preventDefault();
-
-      onSubmit(this.refs.email.value, this.refs.password.value);
-    };
+    const { username, password } = this.state;
 
     return (
-      <div className="login">
-        <div className="login-box">
-          <form onSubmit={handleSubmit}>
-            <label>
-              Email
-              <input type="email" ref="email" placeholder="name@example.com" required/>
-            </label>
-            <label>
-              Password
-              <input type="password" ref="password" placeholder="******" required/>
-            </label>
-            <Button type="submit" color={Colors.PRIMARY} isExpanded>Log in</Button>
+      <Row className="login">
+        <Column small={12}>
+          <h1>Welcome to UserZoom upppercut</h1>
+        </Column>
+        <Column medium={4} small={12} centerOnMedium={true} >
+          <form className="callout" onSubmit={this.doValidate.bind(this)}>
+            <Row>
+              <Column small={12}>
+                <h2>Login form</h2>
+              </Column>
+            </Row>
+                  <UzInput value={username} columnProps={{ small: 12 }} onChange={this.onInputChange.bind(this, 'username')} id="username" label="Username" placeholder="ojete@userzoom.com" />
+                  <UzInput value={password} columnProps={{ small: 12 }} onChange={this.onInputChange.bind(this, 'password')} id="password" label="Password (not too safe, max 4 characters)" type="password" />
+            <Row>
+              <Column small={12}>
+                <input id="checkbox1" type="checkbox" /><label htmlFor="checkbox1">Remember me!</label>
+              </Column>
+            </Row>
+            <Row>
+              <Column small={12}>
+                <Button color={Colors.PRIMARY} float="right">Sign in</Button>
+                <p>
+                The <span data-tooltip aria-haspopup="true" className="has-tip" data-disable-hover="false" title="Fancy word for a beetle.">scarabaeus</span> hung quite clear of any branches, and, if allowed to fall, would have fallen at our feet. Legrand immediately took the scythe, and cleared with it a circular space, three or four yards in diameter, just beneath the insect, and, having accomplished this, ordered Jupiter to let go the string and come down from the tree.
+                </p>
+              </Column>
+            </Row>
           </form>
-        </div>
-      </div>
+        </Column>
+      </Row>
+
     );
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    isAuthenticated: state.auth.get('isAuthenticated'),
-    errorMessage: state.auth.get('errorMessage'),
-    isLoading: state.auth.get('isLoading')
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    onSubmit: (username, password) => {
-      dispatch(login(username, password));
-    },
-    onSuccess: () => {
-      dispatch(push('/'));
-    },
-    onError: (message) => {
-      debug(message);
-    }
-  };
-}
-
-export const LoginContainer = connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;
