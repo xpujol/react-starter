@@ -31,12 +31,16 @@ export class Login extends Component {
 
     if (!username.length || !password.length) {
       console.log('Please type a username and passowrd!');
+      return false;
     }
+
+    return this.props.signIn();
   }
 
   render() {
 
     const { username, password } = this.state;
+    console.log(this.state);
 
     return (
       <Row className="login">
